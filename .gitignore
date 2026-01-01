@@ -39,3 +39,4 @@ sync-to-ha.sh
 
 # Keep only the integration
 !custom_components/
+.backups/

@@ -16,7 +16,7 @@ Intégration Home Assistant pour créer des parties de quiz multijoueur interact
 - 📱 **Notifications push** - Questions et réponses directement sur vos appareils mobiles
 - ✅ **Feedback instantané** - Réponse correcte/incorrecte avec 7 secondes de lecture
 - 🏆 **Classement final** - Score individuel puis podium avec médailles 🥇🥈🥉
-- 📚 **29 fichiers de questions** - Culture générale via OpenQuizzDB (français)
+- 📚 **Large bibliothèque de questions** - Culture générale via OpenQuizzDB (français)
 - 🎚️ **3 niveaux de difficulté** - Débutant, Intermédiaire, Confirmé
 - ⚙️ **Configuration flexible** - 1 à 50 questions par partie
 - 🔄 **Autonome** - Aucun helper externe requis!
@@ -82,7 +82,7 @@ Cliquez sur ce badge pour installer directement dans votre Home Assistant:
 L'intégration crée automatiquement les entités suivantes:
 
 #### Sélection
-- **Fichier de questions** - Choisir parmi 29 fichiers de questions
+- **Fichier de questions** - Large choix de thématiques variées
 - **Difficulté** - Débutant / Intermédiaire / Confirmé
 - **Joueur 1/2/3/4** - Sélectionner les appareils mobiles
 
@@ -205,7 +205,7 @@ Les contributions sont les bienvenues!
 - ✅ Support multijoueur indépendant (1-4 joueurs)
 - ✅ Notifications push avec feedback
 - ✅ Classement final avec podium
-- ✅ 29 fichiers de questions OpenQuizzDB
+- ✅ Large bibliothèque de questions OpenQuizzDB
 - ✅ 3 niveaux de difficulté
 
 ## 📄 Licence
