@@ -391,7 +391,7 @@ class TriviaGameCoordinator(DataUpdateCoordinator):
                         {"action": f"TRIVIA_ANSWER_B_{player_num}", "title": "B"},
                         {"action": f"TRIVIA_ANSWER_C_{player_num}", "title": "C"},
                     ],
-                    "tag": "trivia_question",
+                    "tag": f"trivia_question_{player_num}",  # Tag unique par joueur
                     "persistent": True,
                 },
             },
@@ -413,7 +413,7 @@ class TriviaGameCoordinator(DataUpdateCoordinator):
             {
                 "message": "clear_notification",
                 "data": {
-                    "tag": "trivia_question"
+                    "tag": f"trivia_question_{player_num}"  # Tag unique par joueur
                 },
             },
         )
@@ -442,7 +442,7 @@ class TriviaGameCoordinator(DataUpdateCoordinator):
                 "title": title,
                 "message": message,
                 "data": {
-                    "tag": "trivia_feedback",
+                    "tag": f"trivia_feedback_{player_num}",  # Tag unique par joueur
                     "notification_icon": icon,
                     "color": color,
                     "timeout": 5,  # Auto-dismiss après 5 secondes
@@ -516,8 +516,8 @@ class TriviaGameCoordinator(DataUpdateCoordinator):
         await asyncio.sleep(7)
 
         # Envoyer le classement à tous les joueurs
-        for device_id in self.players:
-            await self._send_ranking(device_id)
+        for i, device_id in enumerate(self.players):
+            await self._send_ranking(i + 1, device_id)
 
         # Nettoyer l'état par joueur
         self.player_question_index = {}
@@ -542,7 +542,7 @@ class TriviaGameCoordinator(DataUpdateCoordinator):
             {
                 "message": "clear_notification",
                 "data": {
-                    "tag": "trivia_question"
+                    "tag": f"trivia_question_{player_num}"  # Tag unique par joueur
                 },
             },
         )
@@ -558,14 +558,14 @@ class TriviaGameCoordinator(DataUpdateCoordinator):
                 "title": "🏆 Fin du jeu!",
                 "message": f"Votre score: {score}/{total}",
                 "data": {
-                    "tag": "trivia_score",
+                    "tag": f"trivia_score_{player_num}",  # Tag unique par joueur
                     "notification_icon": "mdi:trophy",
                     "color": "#FFD700",  # Or/Gold
                 },
             },
         )
 
-    async def _send_ranking(self, device_id: str) -> None:
+    async def _send_ranking(self, player_num: int, device_id: str) -> None:
         """Send final ranking to a player showing all players' scores."""
         service_name = await self._get_notify_service_for_device(device_id)
         if not service_name:
@@ -575,9 +575,9 @@ class TriviaGameCoordinator(DataUpdateCoordinator):
 
         # Créer liste des scores avec numéro de joueur
         player_scores = []
-        for player_num in range(1, self.num_players + 1):
-            score = self.scores.get(player_num, 0)
-            player_scores.append((player_num, score))
+        for p_num in range(1, self.num_players + 1):
+            score = self.scores.get(p_num, 0)
+            player_scores.append((p_num, score))
 
         # Trier par score décroissant
         player_scores.sort(key=lambda x: x[1], reverse=True)
@@ -586,10 +586,10 @@ class TriviaGameCoordinator(DataUpdateCoordinator):
         ranking_message = ""
         medals = ["🥇", "🥈", "🥉"]
 
-        for position, (player_num, score) in enumerate(player_scores, start=1):
+        for position, (p_num, score) in enumerate(player_scores, start=1):
             # Utiliser médailles pour les 3 premiers, sinon numéro de position
             position_icon = medals[position - 1] if position <= 3 else f"{position}."
-            ranking_message += f"{position_icon} Joueur {player_num}: {score}/{total}\n"
+            ranking_message += f"{position_icon} Joueur {p_num}: {score}/{total}\n"
 
         # Supprimer la notification de score individuel
         await self.hass.services.async_call(
@@ -598,7 +598,7 @@ class TriviaGameCoordinator(DataUpdateCoordinator):
             {
                 "message": "clear_notification",
                 "data": {
-                    "tag": "trivia_score"
+                    "tag": f"trivia_score_{player_num}"  # Tag unique par joueur
                 },
             },
         )
