@@ -1,0 +1,41 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+
+# Home Assistant
+*.log
+*.db
+*.db-shm
+*.db-wal
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Secrets and local configs
+secrets.yaml
+*.backup_*
+
+# Development files
+automations.yaml
+scripts.yaml
+helpers.yaml
+helpers_additional.yaml
+trivia_game.py
+sync-to-ha.sh
+
+# Keep only the integration
+!custom_components/

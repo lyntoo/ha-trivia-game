@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Trivia Game</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: var(--primary-background-color, #fafafa);
+            color: var(--primary-text-color, #212121);
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            color: var(--primary-color, #03a9f4);
+        }
+        .game-config {
+            background: var(--card-background-color, white);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .config-row {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: var(--primary-color, #03a9f4);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            margin-top: 10px;
+        }
+        button:hover {
+            opacity: 0.9;
+        }
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        .game-status {
+            background: var(--card-background-color, white);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .question-display {
+            background: var(--card-background-color, white);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .question-text {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .scores {
+            background: var(--card-background-color, white);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .score-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        .score-item:last-child {
+            border-bottom: none;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎮 Trivia Game</h1>
+
+        <div id="config-section" class="game-config">
+            <h2>Configuration du Jeu</h2>
+
+            <div class="config-row">
+                <label for="num-players">Nombre de joueurs (1-4):</label>
+                <input type="number" id="num-players" min="1" max="4" value="1">
+            </div>
+
+            <div class="config-row">
+                <label for="question-file">Fichier de questions:</label>
+                <select id="question-file">
+                    <!-- Will be populated dynamically -->
+                </select>
+            </div>
+
+            <div class="config-row">
+                <label for="difficulty">Difficulté:</label>
+                <select id="difficulty">
+                    <option value="débutant">Débutant</option>
+                    <option value="confirmé">Confirmé</option>
+                    <option value="expert">Expert</option>
+                </select>
+            </div>
+
+            <div class="config-row">
+                <label for="num-questions">Nombre de questions:</label>
+                <input type="number" id="num-questions" min="1" max="50" value="10">
+            </div>
+
+            <div id="players-devices">
+                <!-- Will be populated dynamically based on num-players -->
+            </div>
+
+            <button id="start-btn" onclick="startGame()">Démarrer le Jeu</button>
+        </div>
+
+        <div id="status-section" class="game-status hidden">
+            <h2>État du Jeu</h2>
+            <p id="game-state">En attente...</p>
+            <p id="question-progress">Question 0/0</p>
+            <button id="stop-btn" onclick="stopGame()">Arrêter le Jeu</button>
+        </div>
+
+        <div id="question-section" class="question-display hidden">
+            <h2>Question Actuelle</h2>
+            <div class="question-text" id="current-question">Aucune question active</div>
+        </div>
+
+        <div id="scores-section" class="scores">
+            <h2>Scores</h2>
+            <div id="scores-list">
+                <p>Aucun score disponible</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let hass = null;
+
+        // Initialize when Home Assistant is ready
+        window.addEventListener('load', async () => {
+            // Get Home Assistant connection
+            const connection = await window.hassConnection;
+            hass = connection;
+
+            // Load question files
+            await loadQuestionFiles();
+
+            // Setup player device selectors
+            updatePlayerDevices();
+
+            // Subscribe to entity updates
+            subscribeToUpdates();
+        });
+
+        async function loadQuestionFiles() {
+            // This would need to be populated from the server
+            // For now, add some example files
+            const select = document.getElementById('question-file');
+            const files = [
+                'openquizzdb_1001.json',
+                'openquizzdb_1002.json',
+                'openquizzdb_1003.json',
+                // Add more files...
+            ];
+
+            files.forEach(file => {
+                const option = document.createElement('option');
+                option.value = file;
+                option.textContent = file;
+                select.appendChild(option);
+            });
+        }
+
+        function updatePlayerDevices() {
+            const numPlayers = parseInt(document.getElementById('num-players').value);
+            const container = document.getElementById('players-devices');
+            container.textContent = ''; // Clear existing content safely
+
+            for (let i = 1; i <= numPlayers; i++) {
+                const div = document.createElement('div');
+                div.className = 'config-row';
+
+                const label = document.createElement('label');
+                label.setAttribute('for', `player${i}-device`);
+                label.textContent = `Appareil Joueur ${i}:`;
+
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.id = `player${i}-device`;
+                input.placeholder = 'mobile_app_device_name';
+
+                div.appendChild(label);
+                div.appendChild(input);
+                container.appendChild(div);
+            }
+        }
+
+        document.getElementById('num-players').addEventListener('change', updatePlayerDevices);
+
+        async function startGame() {
+            const numPlayers = parseInt(document.getElementById('num-players').value);
+            const questionFile = document.getElementById('question-file').value;
+            const difficulty = document.getElementById('difficulty').value;
+            const numQuestions = parseInt(document.getElementById('num-questions').value);
+
+            const playersDevices = [];
+            for (let i = 1; i <= numPlayers; i++) {
+                const device = document.getElementById(`player${i}-device`).value;
+                if (device) {
+                    playersDevices.push(device);
+                }
+            }
+
+            if (playersDevices.length !== numPlayers) {
+                alert('Veuillez remplir tous les appareils des joueurs');
+                return;
+            }
+
+            try {
+                await hass.callService('trivia', 'start_game', {
+                    num_players: numPlayers,
+                    question_file: questionFile,
+                    difficulty: difficulty,
+                    num_questions: numQuestions,
+                    players_devices: playersDevices
+                });
+
+                // Update UI
+                document.getElementById('config-section').classList.add('hidden');
+                document.getElementById('status-section').classList.remove('hidden');
+                document.getElementById('question-section').classList.remove('hidden');
+            } catch (error) {
+                alert('Erreur lors du démarrage du jeu: ' + error.message);
+            }
+        }
+
+        async function stopGame() {
+            try {
+                await hass.callService('trivia', 'stop_game', {});
+
+                // Update UI
+                document.getElementById('config-section').classList.remove('hidden');
+                document.getElementById('status-section').classList.add('hidden');
+                document.getElementById('question-section').classList.add('hidden');
+            } catch (error) {
+                alert('Erreur lors de l\'arrêt du jeu: ' + error.message);
+            }
+        }
+
+        function subscribeToUpdates() {
+            if (!hass) return;
+
+            // Subscribe to state changes
+            hass.connection.subscribeEvents((event) => {
+                updateGameStatus();
+            }, 'state_changed');
+
+            // Initial update
+            updateGameStatus();
+        }
+
+        async function updateGameStatus() {
+            if (!hass) return;
+
+            try {
+                // Get game state sensor
+                const gameState = await hass.callWS({
+                    type: 'get_states'
+                });
+
+                const triviaStates = gameState.filter(s => s.entity_id.startsWith('sensor.trivia'));
+
+                // Update game status
+                const stateSensor = triviaStates.find(s => s.entity_id.includes('game_state'));
+                if (stateSensor) {
+                    document.getElementById('game-state').textContent =
+                        `État: ${stateSensor.state}`;
+                    document.getElementById('question-progress').textContent =
+                        `Question ${stateSensor.attributes.current_question_index || 0}/${stateSensor.attributes.total_questions || 0}`;
+                }
+
+                // Update current question
+                const questionSensor = triviaStates.find(s => s.entity_id.includes('current_question'));
+                if (questionSensor) {
+                    document.getElementById('current-question').textContent = questionSensor.state;
+                }
+
+                // Update scores
+                const scoresList = document.getElementById('scores-list');
+                const scoresSensors = triviaStates.filter(s => s.entity_id.includes('score'));
+
+                if (scoresSensors.length > 0) {
+                    scoresList.textContent = ''; // Clear safely
+                    scoresSensors.forEach(sensor => {
+                        const div = document.createElement('div');
+                        div.className = 'score-item';
+
+                        const playerNum = sensor.attributes.player_number || '?';
+
+                        const playerLabel = document.createElement('span');
+                        playerLabel.textContent = `Joueur ${playerNum}`;
+
+                        const scoreValue = document.createElement('span');
+                        scoreValue.textContent = `${sensor.state} points`;
+
+                        div.appendChild(playerLabel);
+                        div.appendChild(scoreValue);
+                        scoresList.appendChild(div);
+                    });
+                }
+            } catch (error) {
+                console.error('Error updating game status:', error);
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,42 @@
+start_game:
+  name: Démarrer le jeu
+  description: Démarre une nouvelle partie de Trivia en utilisant les options configurées sur la page de l'intégration.
+  fields:
+    players_devices:
+      name: Appareils des joueurs
+      description: "Choisissez les appareils qui participeront au jeu."
+      required: true
+      selector:
+        target:
+          device:
+            integration: mobile_app
+
+stop_game:
+  name: Arrêter le jeu
+  description: Arrête la partie en cours
+
+next_question:
+  name: Question suivante
+  description: Envoie la question suivante à tous les joueurs
+
+check_answer:
+  name: Vérifier réponse
+  description: Vérifie la réponse d'un joueur
+  fields:
+    player:
+      name: Numéro du joueur
+      description: Numéro du joueur (1-4)
+      required: true
+      example: 1
+      selector:
+        number:
+          min: 1
+          max: 4
+          mode: box
+    answer:
+      name: Réponse
+      description: Texte de la réponse choisie
+      required: true
+      example: "Paris"
+      selector:
+        text:

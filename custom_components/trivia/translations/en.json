@@ -1,0 +1,20 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Trivia Game Setup",
+        "description": "Configure the Trivia quiz game",
+        "data": {
+          "questions_path": "Path to questions files"
+        }
+      }
+    },
+    "error": {
+      "path_not_found": "The specified path does not exist",
+      "unknown": "Unknown error"
+    },
+    "abort": {
+      "already_configured": "This integration is already configured"
+    }
+  }
+}
