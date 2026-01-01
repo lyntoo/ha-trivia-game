@@ -8,8 +8,6 @@
 
 Intégration Home Assistant pour créer des parties de quiz multijoueur interactives avec notifications push sur mobile!
 
-![Trivia Game Demo](https://via.placeholder.com/800x400?text=Trivia+Game+Screenshot)
-
 ## ✨ Fonctionnalités
 
 - 🎯 **Multijoueur indépendant** - Jusqu'à 4 joueurs, chacun avec sa propre progression
