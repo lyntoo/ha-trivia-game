@@ -4,6 +4,8 @@
 [![GitHub release](https://img.shields.io/github/release/lyntoo/ha-trivia-game.svg)](https://github.com/lyntoo/ha-trivia-game/releases)
 [![License](https://img.shields.io/github/license/lyntoo/ha-trivia-game.svg)](LICENSE)
 
+[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=lyntoo&repository=ha-trivia-game&category=integration)
+
 Intégration Home Assistant pour créer des parties de quiz multijoueur interactives avec notifications push sur mobile!
 
 ![Trivia Game Demo](https://via.placeholder.com/800x400?text=Trivia+Game+Screenshot)
@@ -21,7 +23,15 @@ Intégration Home Assistant pour créer des parties de quiz multijoueur interact
 
 ## 📦 Installation
 
-### Via HACS (Recommandé)
+### 🚀 Installation en 1 clic (Recommandé)
+
+Cliquez sur ce badge pour installer directement dans votre Home Assistant:
+
+[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=lyntoo&repository=ha-trivia-game&category=integration)
+
+> **Note**: HACS doit être installé. Si ce n'est pas le cas, suivez les instructions ci-dessous.
+
+### Via HACS (Installation manuelle)
 
 1. Ouvrir **HACS** dans Home Assistant
 2. Cliquer sur **Intégrations**
