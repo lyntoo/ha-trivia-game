@@ -8,6 +8,8 @@
 
 Intégration Home Assistant pour créer des parties de quiz multijoueur interactives avec notifications push sur mobile!
 
+> **📱 Compatibilité:** Cette intégration est conçue et testée pour les utilisateurs **Android**.
+
 ## ✨ Fonctionnalités
 
 - 🎯 **Multijoueur indépendant** - Jusqu'à 4 joueurs, chacun avec sa propre progression
@@ -46,6 +48,25 @@ Cliquez sur ce badge pour installer directement dans votre Home Assistant:
 1. Télécharger la dernière release depuis [Releases](https://github.com/lyntoo/ha-trivia-game/releases)
 2. Copier le dossier `custom_components/trivia` vers votre dossier `config/custom_components/`
 3. Redémarrer Home Assistant
+
+## 🗑️ Désinstallation
+
+### Via HACS
+
+1. Ouvrir **HACS** dans Home Assistant
+2. Aller dans **Intégrations**
+3. Rechercher **"Trivia Game"**
+4. Cliquer sur les **3 points** → **Retirer**
+5. Aller dans **Paramètres** → **Appareils et services**
+6. Trouver **Trivia Game** et cliquer sur les **3 points** → **Supprimer**
+7. **Redémarrer** Home Assistant
+
+### Installation Manuelle
+
+1. Supprimer le dossier `config/custom_components/trivia`
+2. Aller dans **Paramètres** → **Appareils et services**
+3. Trouver **Trivia Game** et cliquer sur les **3 points** → **Supprimer**
+4. **Redémarrer** Home Assistant
 
 ## ⚙️ Configuration
 
