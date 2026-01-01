@@ -230,5 +230,5 @@ class TriviaPlayerDeviceSelect(SelectEntity):
     @property
     def entity_registry_enabled_default(self) -> bool:
         """Return if the entity should be enabled when first added to the entity registry."""
-        # Only enable player 1 by default
-        return self._player_num == 1
+        # Enable all players by default
+        return True
